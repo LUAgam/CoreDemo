@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+          <!-- 配置数据源,和系统使用同一个数据源 -->
+          <property name="dataSource" ref="dataSource" />
+                    <!-- 统一的事务管理 -->
+          <property name="transactionManager" ref="transactionManager" />
+          <property name="databaseSchemaUpdate" value="true" />
+          <property name="jobExecutorActivate" value="false" />
+          
+          <!-- 由于ACT_ID_USER改成视图，需要配置dbIdentityUsed避免启动出错 --> 
+    	  <property name="dbIdentityUsed" value="false" /> 
+    	  <!--  Activit默认提供了4中历史级别： 
+		   none: 不保存任何历史记录，可以提高系统性能； 
+		   activity：保存所有的流程实例、任务、活动信息； 
+		   audit：也是Activiti的默认级别，保存所有的流程实例、任务、活动、表单属性； 
+		   full： 最完整的历史记录，除了包含audit级别的信息之外还能保存详细，例如：流程变量。 
+		      --> 
+     	  <property value="full" name="history"></property> 
+     	
+
+          <property name="activityFontName"  value="宋体" />
+          <property name="labelFontName"  value="宋体" />
+  </bean>
+  <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+      <property name="processEngineConfiguration" ref="processEngineConfiguration" />
+  </bean>
+  
+  <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />  
+  <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />  
+  <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />  
+  <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />  
+  <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />  
+
+</beans>
